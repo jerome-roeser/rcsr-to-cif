@@ -32,7 +32,7 @@ with open('symmops.json', 'rb') as f:
 
 for i, net in enumerate(nets):
     url = 'http://rcsr.anu.edu.au/nets/'+ net
-    filename = f'{net}.cif' 
+    filename = f'output/{net}.cif' 
     
     driver.get(url)
     if i == 0: 
