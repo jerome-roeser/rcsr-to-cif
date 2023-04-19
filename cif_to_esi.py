@@ -13,7 +13,7 @@ def convert_cif_to_excel(file):
     symmetry = f"Space Group: {cif[data]['_symmetry_space_group_name_H-M']} ({cif[data]['_symmetry_Int_Tables_number']})"
     crystal_system = cif[data]['_symmetry_cell_setting']
     cell_lenghts = f"a = {cif[data]['_cell_length_a']} Å, b = {cif[data]['_cell_length_b']} Å, c = {cif[data]['_cell_length_c']} Å"
-    cell_angles = f"\u03B1 = \u03B2 = {90.00} °, \u03B3 = {120.00} °"
+    cell_angles = f"\u03B1 = {cif[data]['_cell_angle_alpha']} °, \u03B2 = {cif[data]['_cell_angle_beta']} °, \u03B3 = {cif[data]['_cell_angle_gamma']} °"
     
     header = pd.MultiIndex.from_arrays([[data_name, '', '', '', ''], 
                                         [symmetry, '', '', '', ''],
@@ -32,6 +32,4 @@ def convert_cif_to_excel(file):
 path = Path('output/')
 for p in path.iterdir():
     if p.suffix == '.cif':
-        print(f'{p.name} -> {p.stem}')
         convert_cif_to_excel(p)
-        
