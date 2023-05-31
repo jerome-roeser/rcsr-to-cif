@@ -1,7 +1,9 @@
 from CifFile import ReadCif
+import argparse
 import pandas as pd
 from pathlib import Path
 
+DEFAULT_FOLDER = 'output/'
 
 def convert_cif_to_excel(file):
     with open(file, 'r') as f:
