@@ -29,7 +29,27 @@ def convert_cif_to_excel(file):
     df_2.columns = header
     df_2.to_excel(f'output/{data_name}.xlsx')    
 
-path = Path('output/')
-for p in path.iterdir():
-    if p.suffix == '.cif':
-        convert_cif_to_excel(p)
+def get_args():
+    parser = argparse.ArgumentParser(
+        description='Convert a the relevant information of a .cif file in a well formatted excel table',
+        epilog="""The excel table can than be copied/pasted in a word document for ESI"""
+    )
+    parser.add_argument("-p", "--path", type=str, help="The path input .cif files are")
+    parser.add_argument("-i", "--input", type=str, help="The specific input .cif file located in the path folder")
+    return parser.parse_args()
+
+def main(folder, file):
+    if not file: 
+        path = Path(folder)
+        for p in path.iterdir():
+            if p.suffix == '.cif':
+                convert_cif_to_excel(p)
+    else:
+        convert_cif_to_excel(file)
+
+if __name__ == '__main__':
+    args = get_args()
+    folder = args.path if args.path else DEFAULT_FOLDER
+    file = args.input if args.input else None
+    
+    main(folder, file)
