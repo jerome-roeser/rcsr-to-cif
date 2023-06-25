@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 25 12:11:13 2023
-
 @author: Jerome Roeser
+#TODO fix problem with symmops origin (default here is origin-1 whereas it is origin-2 in RCSR)
 """
 
 import json
@@ -10,13 +9,22 @@ import pandas as pd
 import re
 import time
 from datetime import datetime
-from pymatgen.core import Lattice, Structure
+from pymatgen.core import Lattice
 from pymatgen.symmetry.groups import SpaceGroup 
 from selenium.webdriver import Chrome
 from textwrap import dedent
-# from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-# from pymatgen.io.cif import CifWriter
 
+
+# Define the structures that need to be scraped here
+nets = ['dia']
+layers = ['sql', 'hcb', 'kgm', 'fxt']
+ribbons = ['qbl', 'qbk']
+polyhedra = ['cub', 'dod']
+
+
+# import symmetry operations of spcace groups
+with open('symmops.json', 'rb') as f: 
+    symmops = json.load(f)
 
 
 # webdriver = r"C:\Users\roeser\Downloads\install_files\chromedriver_win32"
@@ -26,12 +34,8 @@ from textwrap import dedent
 #^Download from: https://chromedriver.chromium.org/
 
 # driver = Chrome(executable_path=webdriver)
-driver = Chrome()
-nets = ['dia']
-layers = ['sql', 'hcb', 'kgm', 'fxt']
 
-with open('symmops.json', 'rb') as f: 
-    symmops = json.load(f)
+driver = Chrome()
 
 def write_cif(filename, net, space_group_name, space_group, lattice, all_vert_info):
     """
@@ -73,7 +77,7 @@ def write_cif(filename, net, space_group_name, space_group, lattice, all_vert_in
                     """
             f.write(dedent(middle).strip())
             for v in all_vert_info:
-                CN = ['__', 'H', 'O', 'N', 'Si', '', 'Ti']
+                CN = ['__', 'H', 'O', 'N', 'Si', 'P', 'Ti']
                 f.write(f"\n{v[0]}  {CN[v[1]]}  {v[2]:.4f}  {v[3]:.4f}  {v[4]:.4f}")
 
 def scrape_nets(nets):
@@ -128,9 +132,65 @@ def scrape_layers(layers):
         coords = [dfs[3].loc[j,'x':'z'].to_list() for j in range(0, len(dfs[3]))]
         
         write_cif(filename, layer, space_group_name, space_group, lattice, all_vert_info)
-        
 
+def scrape_ribbons(ribbons):
+    
+    """ 
+    """
+    for i, ribbon in enumerate(ribbons):
+        url = 'https://rcsr.anu.edu.au/ribbons/'+ ribbon
+        filename = f'output/{ribbon}.cif' 
+        
+        driver.get(url)
+        if i == 0: 
+            time.sleep(10)
+        else:
+            time.sleep(1)
+        dfs = pd.read_html(driver.page_source)
+        space_group_name = re.sub('\(|\)','', dfs[0].iloc[0,1])
+        space_group = SpaceGroup(space_group_name)
+        a, b, c = dfs[2].iloc[0,[0,1,2]]
+        alpha, beta, gamma = dfs[2].iloc[0,[3,4,5]]
+        
+        
+        all_vert_info = [dfs[3].loc[j,'vertex':'z'].to_list() for j in range(0, len(dfs[3]))]
+        lattice = Lattice.from_parameters(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
+        species = [dfs[3].loc[j,'vertex'] for j in range(0, len(dfs[3]))]
+        coords = [dfs[3].loc[j,'x':'z'].to_list() for j in range(0, len(dfs[3]))]
+        
+        write_cif(filename, ribbon, space_group_name, space_group, lattice, all_vert_info)
+        
+def scrape_polyhedra(polyhedra):
+    
+    """ 
+    """
+    for i, polyhedron in enumerate(polyhedra):
+        url = 'https://rcsr.anu.edu.au/polyhedra/'+ polyhedron
+        filename = f'output/{polyhedron}.cif' 
+        
+        driver.get(url)
+        if i == 0: 
+            time.sleep(10)
+        else:
+            time.sleep(1)
+        dfs = pd.read_html(driver.page_source)
+        space_group_name = re.sub('\(|\)','', dfs[0].iloc[0,3])
+        space_group = SpaceGroup(space_group_name)
+        a, b, c = 20, 20, 20
+        alpha, beta, gamma = 90, 90, 90
+        
+        
+        all_vert_info = [dfs[3].loc[j,'vertex':'z'].to_list() for j in range(0, len(dfs[3]))]
+        lattice = Lattice.from_parameters(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
+        species = [dfs[3].loc[j,'vertex'] for j in range(0, len(dfs[3]))]
+        coords = [dfs[3].loc[j,'x':'z'].to_list() for j in range(0, len(dfs[3]))]
+        
+        write_cif(filename, polyhedron, space_group_name, space_group, lattice, all_vert_info)
+
+scrape_polyhedra(polyhedra)
+scrape_ribbons(ribbons)
 scrape_layers(layers)
 scrape_nets(nets)
+
 driver.close()
 print('Done!')
