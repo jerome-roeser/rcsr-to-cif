@@ -100,54 +100,10 @@ def scrape_nets(nets):
         species = [dfs[2].loc[j,'vertex'] for j in range(0, len(dfs[2]))]
         coords = [dfs[2].loc[j,'x':'z'].to_list() for j in range(0, len(dfs[2]))]
         
-        structure = Structure.from_spacegroup(space_group_name, lattice, species, coords)
-        # structure.to(filename=filename)
-        # w = CifWriter(structure)
-        # w.write_file('mystructure.cif')
         write_cif(filename, net, space_group_name, space_group, lattice, all_vert_info)
-        
-        # with open(filename, 'w') as f: 
-        #     header =f"""
-        #             data_{net}
-        #             _audit_creation_date              {datetime.today().date()}
-        #             _audit_creation_method            'script-jr'
-        #             _symmetry_space_group_name_H-M    '{space_group_name}'
-        #             _symmetry_Int_Tables_number       {space_group.int_number}
-        #             _symmetry_cell_setting            {space_group.crystal_system}
-        #             loop_
-        #             _symmetry_equiv_pos_as_xyz
-        #             """
-        #     f.write(dedent(header).strip())
-        #     for op in symmops[str(space_group.int_number)][1:]:
-        #     # for op in symmops['227-b'][1:]:
-        #         s = re.sub(r'\s', '', op) 
-        #         f.write(f"\n\t{s}")
-        #     f.write('\n')
-        #     middle =f"""
-                    
-        #             _cell_length_a                    {lattice.a}
-        #             _cell_length_b                    {lattice.b}
-        #             _cell_length_c                    {lattice.c}
-        #             _cell_angle_alpha                 {lattice.alpha}
-        #             _cell_angle_beta                  {lattice.beta}
-        #             _cell_angle_gamma                 {lattice.gamma}
-        #             loop_
-        #             _atom_site_label
-        #             _atom_site_type_symbol
-        #             _atom_site_fract_x
-        #             _atom_site_fract_y
-        #             _atom_site_fract_z
-        #             # _atom_site_U_iso_or_equiv
-        #             # _atom_site_adp_type
-        #             # _atom_site_occupancy
-        #             """
-        #     f.write(dedent(middle).strip())
-        #     for v in all_vert_info:
-        #         CN = ['__', 'H', 'O', 'N', 'Si', '', 'Ti']
-        #         f.write(f"\n{v[0]}  {CN[v[1]]}  {v[2]:.4f}  {v[3]:.4f}  {v[4]:.4f}")
 
-    
 def scrape_layers(layers):
+    
     """ 
     """
     for i, layer in enumerate(layers):
@@ -171,51 +127,8 @@ def scrape_layers(layers):
         species = [dfs[3].loc[j,'vertex'] for j in range(0, len(dfs[3]))]
         coords = [dfs[3].loc[j,'x':'z'].to_list() for j in range(0, len(dfs[3]))]
         
-        structure = Structure.from_spacegroup(space_group_name, lattice, species, coords)
-        # structure.to(filename=filename)
-        # w = CifWriter(structure)
-        # w.write_file('mystructure.cif')
         write_cif(filename, layer, space_group_name, space_group, lattice, all_vert_info)
-        # with open(filename, 'w') as f: 
-        #     header =f"""
-        #             data_{layer}
-        #             _audit_creation_date              {datetime.today().date()}
-        #             _audit_creation_method            'script-jr'
-        #             _symmetry_space_group_name_H-M    '{space_group_name}'
-        #             _symmetry_Int_Tables_number       {space_group.int_number}
-        #             _symmetry_cell_setting            {space_group.crystal_system}
-        #             loop_
-        #             _symmetry_equiv_pos_as_xyz
-        #             """
-        #     f.write(dedent(header).strip())
-        #     for op in symmops[str(space_group.int_number)][1:]:
-        #     # for op in symmops['227-b'][1:]:
-        #         s = re.sub(r'\s', '', op) 
-        #         f.write(f"\n\t{s}")
-        #     f.write('\n')
-        #     middle =f"""
-                    
-        #             _cell_length_a                    {lattice.a}
-        #             _cell_length_b                    {lattice.b}
-        #             _cell_length_c                    {lattice.c}
-        #             _cell_angle_alpha                 {lattice.alpha}
-        #             _cell_angle_beta                  {lattice.beta}
-        #             _cell_angle_gamma                 {lattice.gamma}
-        #             loop_
-        #             _atom_site_label
-        #             _atom_site_type_symbol
-        #             _atom_site_fract_x
-        #             _atom_site_fract_y
-        #             _atom_site_fract_z
-        #             # _atom_site_U_iso_or_equiv
-        #             # _atom_site_adp_type
-        #             # _atom_site_occupancy
-        #             """
-        #     f.write(dedent(middle).strip())
-        #     for v in all_vert_info:
-        #         CN = ['__', 'H', 'O', 'N', 'Si', '', 'Ti']
-        #         f.write(f"\n{v[0]}  {CN[v[1]]}  {v[2]:.4f}  {v[3]:.4f}  {v[4]:.4f}")
-
+        
 
 scrape_layers(layers)
 scrape_nets(nets)
