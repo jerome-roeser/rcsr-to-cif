@@ -21,11 +21,12 @@ from textwrap import dedent
 
 # webdriver = r"C:\Users\roeser\Downloads\install_files\chromedriver_win32"
 # webdriver = r"C:/Users/Jerome Roeser/Documents/chromedriver.exe"
-webdriver = r"C:/temp/git_repos/chromedriver.exe"
+# webdriver = r"C:/temp/git_repos/chromedriver.exe"
 # webdriver = r"W:/Documents/finxter/projects/chromedriver.exe" #change me!
 #^Download from: https://chromedriver.chromium.org/
 
-driver = Chrome(executable_path=webdriver)
+# driver = Chrome(executable_path=webdriver)
+driver = Chrome()
 nets = ['dia']
 layers = ['sql', 'hcb', 'kgm', 'fxt']
 
@@ -145,7 +146,6 @@ def scrape_nets(nets):
         #         CN = ['__', 'H', 'O', 'N', 'Si', '', 'Ti']
         #         f.write(f"\n{v[0]}  {CN[v[1]]}  {v[2]:.4f}  {v[3]:.4f}  {v[4]:.4f}")
 
-    driver.close()
     
 def scrape_layers(layers):
     """ 
@@ -216,8 +216,8 @@ def scrape_layers(layers):
         #         CN = ['__', 'H', 'O', 'N', 'Si', '', 'Ti']
         #         f.write(f"\n{v[0]}  {CN[v[1]]}  {v[2]:.4f}  {v[3]:.4f}  {v[4]:.4f}")
 
-    driver.close()
 
-scrape_nets(nets)
 scrape_layers(layers)
+scrape_nets(nets)
+driver.close()
 print('Done!')
