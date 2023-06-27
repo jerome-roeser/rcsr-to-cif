@@ -24,7 +24,7 @@ for i in range(1,231):
             r = requests.get(url)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.content)
-                symmops_a[key].append({url_sufix : soup.pre.text.splitlines()})
+                symmops_a[key].append({url_sufix[0] : soup.pre.text.splitlines()})
                 # symmops[key] = {url_sufix:soup.pre.text.splitlines()}
             else:
                 continue
@@ -33,4 +33,4 @@ for i in range(1,231):
     
 # symmops['227-b'] = soup.pre.text.splitlines()
 with open('symmops.json', 'w') as f:
-    f.write(json.dumps(symmops))
+    f.write(json.dumps(symmops_a))
