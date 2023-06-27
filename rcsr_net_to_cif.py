@@ -16,14 +16,14 @@ from textwrap import dedent
 
 
 # Define the structures that need to be scraped here
-nets = ['dia']
-layers = ['sql', 'hcb', 'kgm', 'fxt']
-ribbons = ['qbl', 'qbk']
-polyhedra = ['cub', 'dod']
+nets = ['dia', 'srs', 'bor', 'ctn']
+layers = []
+ribbons = []
+polyhedra = []
 
 
 # import symmetry operations of spcace groups
-with open('symmops.json', 'rb') as f: 
+with open('symmops_final.json', 'rb') as f: 
     symmops = json.load(f)
 
 
@@ -34,7 +34,6 @@ with open('symmops.json', 'rb') as f:
 #^Download from: https://chromedriver.chromium.org/
 
 # driver = Chrome(executable_path=webdriver)
-
 driver = Chrome()
 
 def write_cif(filename, net, space_group_name, space_group, lattice, all_vert_info):
@@ -52,10 +51,12 @@ def write_cif(filename, net, space_group_name, space_group, lattice, all_vert_in
                     _symmetry_equiv_pos_as_xyz
                     """
             f.write(dedent(header).strip())
-            for op in symmops[str(space_group.int_number)][1:]:
-            # for op in symmops['227-b'][1:]:
-                s = re.sub(r'\s', '', op) 
-                f.write(f"\n\t{s}")
+            # for op in symmops[str(space_group.int_number)][1:]:
+            for value in symmops[str(space_group.int_number)][0].values():
+                for op in value[1:]:
+                # for op in symmops['227-b'][1:]:
+                    s = re.sub(r'\s', '', op) 
+                    f.write(f"\n\t{s}")
             f.write('\n')
             middle =f"""
                     
@@ -89,7 +90,7 @@ def scrape_nets(nets):
         
         driver.get(url)
         if i == 0: 
-            time.sleep(10)
+            time.sleep(5)
         else:
             time.sleep(1)
         dfs = pd.read_html(driver.page_source)
@@ -116,7 +117,7 @@ def scrape_layers(layers):
         
         driver.get(url)
         if i == 0: 
-            time.sleep(10)
+            time.sleep(5)
         else:
             time.sleep(1)
         dfs = pd.read_html(driver.page_source)
@@ -143,7 +144,7 @@ def scrape_ribbons(ribbons):
         
         driver.get(url)
         if i == 0: 
-            time.sleep(10)
+            time.sleep(5)
         else:
             time.sleep(1)
         dfs = pd.read_html(driver.page_source)
@@ -170,7 +171,7 @@ def scrape_polyhedra(polyhedra):
         
         driver.get(url)
         if i == 0: 
-            time.sleep(10)
+            time.sleep(5)
         else:
             time.sleep(1)
         dfs = pd.read_html(driver.page_source)
