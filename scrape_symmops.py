@@ -2,11 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-#TODO: for tetragonal and upwards replace with origin-2 (test status of a.htm sufix )
-# url_prefix = 'http://img.chem.ucl.ac.uk/sgp/large/'
-url_prefix = 'http://img.chem.ucl.ac.uk/sgp/medium/'
+#TODO: fix problem with # 141 and 142 (cz3 instead of bz3 for origin-2)
+url_prefix = 'http://img.chem.ucl.ac.uk/sgp/large/'
+# url_prefix = 'http://img.chem.ucl.ac.uk/sgp/medium/'
 
-url_sufixes = ['az3.htm', 'bz3.htm', 'cz3.htm', 'dz3.htm', 'ez3.htm', 'fz3.htm']
+# url_sufixes = ['az3.htm', 'bz3.htm', 'cz3.htm', 'dz3.htm', 'ez3.htm', 'fz3.htm']
+url_sufixes = ['cz3.htm']
 
 # symmops_origin_1 = {}
 # symmops_origin_2 = {}
@@ -120,8 +121,9 @@ def make_hybrid_symmops():
         f.write(json.dumps(symmops))
     return symmops
     
-    
+crystal_maker_list = [17,48,50,59,20,68,70,85,86,125,126,129,130,133,134,137,138,88,141,142,201,222,224,203,227,228]
+materials_studio_list = [48,50,59,68,70,85,86,125,126,129,130,133,134,137,138,88,141,142,201,222,224,203,227,228]  
 origin_2_list = find_origin_2_point_groups()
 symmops_origin_1 = scrape_origin_1()
-symmops_origin_2 = scrape_origin_2(origin_2_list)
+symmops_origin_2 = scrape_origin_2(materials_studio_list)
 symmops = make_hybrid_symmops()
