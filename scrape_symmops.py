@@ -90,6 +90,31 @@ def scrape_origin_2(space_group__origin_2_list):
         except ConnectionError:
             print('damn...')
     return symmops_origin_2
+
+def scrape_origin_2_bug(space_group__origin_2_list):
+    symmops_origin_2 = {}
+    for group in space_group__origin_2_list:
+        key = str(group)
+        symmops_origin_2[key] = []
+        url_sufix = 'cz3.htm'
+        # key = str(i) + '-' + url_sufix[0]
+        if group < 10:
+            url = url_prefix + '00' + str(group) + url_sufix
+        elif group < 100:
+            url = url_prefix + '0' + str(group) + url_sufix
+        else:
+            url = url_prefix + str(group) + url_sufix
+        try: 
+            r = requests.get(url)
+            if r.status_code == 200:
+                soup = BeautifulSoup(r.content)
+                symmops_origin_2[key].append({'origin-2' : soup.pre.text.splitlines()})
+                # symmops[key] = {url_sufix:soup.pre.text.splitlines()}
+            else:
+                continue
+        except ConnectionError:
+            print('damn...')
+    return symmops_origin_2
         
 def find_origin_2_point_groups():
     space_group_list = []
@@ -117,13 +142,17 @@ def make_hybrid_symmops():
     symmops = symmops_origin_1
     for key in symmops_origin_2.keys(): 
         symmops[key] = symmops_origin_2[key]
+    for key in symmops_origin_2_bug.keys(): 
+        symmops[key] = symmops_origin_2_bug[key]
     with open('symmops_final.json', 'w') as f:
         f.write(json.dumps(symmops))
     return symmops
     
 crystal_maker_list = [17,48,50,59,20,68,70,85,86,125,126,129,130,133,134,137,138,88,141,142,201,222,224,203,227,228]
-materials_studio_list = [48,50,59,68,70,85,86,125,126,129,130,133,134,137,138,88,141,142,201,222,224,203,227,228]  
+materials_studio_list = [48,50,59,68,70,85,86,125,126,129,130,133,134,137,138,88,201,222,224,203,227,228]  
+bug_list = [141,142]  
 origin_2_list = find_origin_2_point_groups()
 symmops_origin_1 = scrape_origin_1()
 symmops_origin_2 = scrape_origin_2(materials_studio_list)
+symmops_origin_2_bug = scrape_origin_2_bug(bug_list)
 symmops = make_hybrid_symmops()
